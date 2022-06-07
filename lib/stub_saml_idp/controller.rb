@@ -58,6 +58,7 @@ module StubSamlIdp
       false
     end
 
+    # rubocop:disable Naming/MethodName
     def decode_SAMLRequest(saml_request)
       zstream = Zlib::Inflate.new(-Zlib::MAX_WBITS)
       @saml_request = zstream.inflate(Base64.decode64(saml_request))
@@ -67,6 +68,10 @@ module StubSamlIdp
       @saml_acs_url = @saml_request[/AssertionConsumerServiceURL=['"](.+?)['"]/, 1]
     end
 
+    # rubocop:disable Layout/LineLength
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/MethodLength
     def encode_SAMLResponse(name_id, opts = {})
       now = Time.now.utc
       response_id = SecureRandom.uuid
@@ -80,11 +85,11 @@ module StubSamlIdp
 
       assertion = %(<saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="_#{reference_id}" IssueInstant="#{now.iso8601}" Version="2.0"><saml:Issuer Format="urn:oasis:names:SAML:2.0:nameid-format:entity">#{issuer_uri}</saml:Issuer><saml:Subject><saml:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress">#{name_id}</saml:NameID><saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer"><saml:SubjectConfirmationData#{@saml_request_id ? %( InResponseTo="#{@saml_request_id}") : ''} NotOnOrAfter="#{(now + (3 * 60)).iso8601}" Recipient="#{@saml_acs_url}"></saml:SubjectConfirmationData></saml:SubjectConfirmation></saml:Subject><saml:Conditions NotBefore="#{(now - 5).iso8601}" NotOnOrAfter="#{(now + (60 * 60)).iso8601}"><saml:AudienceRestriction><saml:Audience>#{audience_uri}</saml:Audience></saml:AudienceRestriction></saml:Conditions>#{attributes_statement}<saml:AuthnStatement AuthnInstant="#{now.iso8601}" SessionIndex="_#{reference_id}"#{session_expiration}><saml:AuthnContext><saml:AuthnContextClassRef>urn:federation:authentication:windows</saml:AuthnContextClassRef></saml:AuthnContext></saml:AuthnStatement></saml:Assertion>)
 
-      digest_value = Base64.encode64(algorithm.digest(assertion)).gsub(/\n/, '')
+      digest_value = Base64.encode64(algorithm.digest(assertion)).delete("\n")
 
       signed_info = %(<ds:SignedInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"></ds:CanonicalizationMethod><ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-#{algorithm_name}"></ds:SignatureMethod><ds:Reference URI="#_#{reference_id}"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></ds:Transform><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"></ds:Transform></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig##{algorithm_name}"></ds:DigestMethod><ds:DigestValue>#{digest_value}</ds:DigestValue></ds:Reference></ds:SignedInfo>)
 
-      signature_value = sign(signed_info).gsub(/\n/, '')
+      signature_value = sign(signed_info).delete("\n")
 
       signature = %(<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">#{signed_info}<ds:SignatureValue>#{signature_value}</ds:SignatureValue><KeyInfo xmlns="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>#{x509_certificate}</ds:X509Certificate></ds:X509Data></KeyInfo></ds:Signature>)
 
@@ -94,6 +99,10 @@ module StubSamlIdp
 
       Base64.encode64(xml)
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Naming/MethodName
 
     private
 
@@ -105,5 +114,6 @@ module StubSamlIdp
     def attributes(provider, name_id)
       provider || %(<saml:AttributeStatement><saml:Attribute Name="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"><saml:AttributeValue>#{name_id}</saml:AttributeValue></saml:Attribute></saml:AttributeStatement>)
     end
+    # rubocop:enable Layout/LineLength
   end
 end

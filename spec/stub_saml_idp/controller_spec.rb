@@ -3,8 +3,9 @@
 require 'spec_helper'
 require 'timecop'
 
+# rubocop:disable Layout/LineLength
 describe StubSamlIdp::Controller do
-  include StubSamlIdp::Controller
+  include described_class
 
   def params
     @params ||= {}
@@ -17,7 +18,7 @@ describe StubSamlIdp::Controller do
     expect(saml_acs_url).to eq(requested_saml_acs_url)
   end
 
-  context 'SAML Responses' do
+  describe 'SAML Responses' do
     before do
       params[:SAMLRequest] = make_saml_request
       validate_saml_request
@@ -29,11 +30,13 @@ describe StubSamlIdp::Controller do
       expect(response.name_id).to eq('foo@example.com')
       expect(response.issuers).to eq(['http://example.com'])
       response.settings = saml_settings
-      expect(response.is_valid?).to be_truthy
+      expect(response).to be_is_valid
     end
 
     it 'handles custom attribute objects' do
+      # rubocop:disable RSpec/VerifiedDoubles
       provider = double(to_s: %(<saml:AttributeStatement><saml:Attribute Name="organization"><saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Organization name</saml:AttributeValue></saml:Attribute></saml:AttributeStatement>))
+      # rubocop:enable RSpec/VerifiedDoubles
 
       default_attributes = %(<saml:AttributeStatement><saml:Attribute Name="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"><saml:AttributeValue>foo@example.com</saml:AttributeValue></saml:Attribute></saml:AttributeStatement>)
 
@@ -72,3 +75,4 @@ describe StubSamlIdp::Controller do
     end
   end
 end
+# rubocop:enable Layout/LineLength

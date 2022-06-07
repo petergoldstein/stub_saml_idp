@@ -20,13 +20,14 @@ end
 
 def create_app(name = 'idp', env = {})
   puts "[#{name}] Creating Rails app"
-  rails_new_options = %w[-A -C -G -J -M -S -T --skip-keeps --skip-spring --skip-listen --skip-bootsnap --skip-action-mailbox --skip-action-text --skip-active-job --skip-active-storage --skip-hotwire --skip-jbuilder]
-  env.merge!('RUBY_SAML_VERSION' => OneLogin::RubySaml::VERSION)
+  rails_new_options = %w[-A -C -G -J -M -S -T --skip-keeps --skip-spring --skip-listen --skip-bootsnap
+                         --skip-action-mailbox --skip-action-text --skip-active-job --skip-active-storage
+                         --skip-hotwire --skip-jbuilder]
+  env['RUBY_SAML_VERSION'] = OneLogin::RubySaml::VERSION
   Dir.chdir(working_directory) do
     FileUtils.rm_rf(name)
-    puts("[#{working_directory}] rails _#{Rails.version}_ new #{name} #{rails_new_options.join(' ')} -m #{File.expand_path(
-      "../#{name}_template.rb", __FILE__
-    )}")
+    puts("[#{working_directory}] rails _#{Rails.version}_ new #{name} "\
+         "#{rails_new_options.join(' ')} -m #{File.expand_path("../#{name}_template.rb", __FILE__)}")
     system(env, 'rails', "_#{Rails.version}_", 'new', name, *rails_new_options, '-m',
            File.expand_path("../#{name}_template.rb", __FILE__))
   end
@@ -39,8 +40,11 @@ def start_app(name, port, _options = {})
 
   with_clean_env do
     Dir.chdir(app_dir(name)) do
-      pid = Process.spawn(app_env(name), "bundle exec rails server -p #{port} -e production", chdir: app_dir(name),
-                                                                                              out: "log/#{name}.log", err: "log/#{name}.err.log")
+      pid = Process.spawn(app_env(name),
+                          "bundle exec rails server -p #{port} -e production",
+                          chdir: app_dir(name),
+                          out: "log/#{name}.log",
+                          err: "log/#{name}.err.log")
       begin
         Timeout.timeout(APP_READY_TIMEOUT) do
           sleep 1 until app_ready?(pid, port)
@@ -127,7 +131,7 @@ def app_env(name)
 end
 
 def working_directory
-  $working_directory ||= Dir.mktmpdir('idp_test')
+  @working_directory ||= Dir.mktmpdir('idp_test')
 end
 
 def with_clean_env(&blk)
