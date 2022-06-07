@@ -7,6 +7,8 @@ gemspec
 group :development, :test do
   gem 'rails', '~> 7.0.0'
   gem 'rubocop'
+  gem 'rubocop-performance'
+  gem 'rubocop-rake'
   gem 'rubocop-rspec'
   gem 'ruby-saml'
 end
