@@ -27,6 +27,8 @@ jobs:
         include:
           - ruby: ruby-head
             gemfile: gemfiles/Gemfile.rails7.0
+          - ruby: "3.2"
+            gemfile: gemfiles/Gemfile.rails7.0
           - ruby: "2.7"
             gemfile: gemfiles/Gemfile.rails6.0
           - ruby: "2.6"
