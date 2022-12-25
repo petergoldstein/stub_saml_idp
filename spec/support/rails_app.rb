@@ -26,7 +26,7 @@ def create_app(name = 'idp', env = {})
   env['RUBY_SAML_VERSION'] = OneLogin::RubySaml::VERSION
   Dir.chdir(working_directory) do
     FileUtils.rm_rf(name)
-    puts("[#{working_directory}] rails _#{Rails.version}_ new #{name} "\
+    puts("[#{working_directory}] rails _#{Rails.version}_ new #{name} " \
          "#{rails_new_options.join(' ')} -m #{File.expand_path("../#{name}_template.rb", __FILE__)}")
     system(env, 'rails', "_#{Rails.version}_", 'new', name, *rails_new_options, '-m',
            File.expand_path("../#{name}_template.rb", __FILE__))
