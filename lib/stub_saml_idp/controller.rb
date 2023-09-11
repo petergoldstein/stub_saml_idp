@@ -93,7 +93,7 @@ module StubSamlIdp
 
       signature = %(<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">#{signed_info}<ds:SignatureValue>#{signature_value}</ds:SignatureValue><KeyInfo xmlns="http://www.w3.org/2000/09/xmldsig#"><ds:X509Data><ds:X509Certificate>#{x509_certificate}</ds:X509Certificate></ds:X509Data></KeyInfo></ds:Signature>)
 
-      assertion_and_signature = assertion.sub(/Issuer><saml:Subject/, "Issuer>#{signature}<saml:Subject")
+      assertion_and_signature = assertion.sub('Issuer><saml:Subject', "Issuer>#{signature}<saml:Subject")
 
       xml = %(<samlp:Response ID="_#{response_id}" Version="2.0" IssueInstant="#{now.iso8601}" Destination="#{@saml_acs_url}" Consent="urn:oasis:names:tc:SAML:2.0:consent:unspecified"#{@saml_request_id ? %( InResponseTo="#{@saml_request_id}") : ''} xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"><saml:Issuer xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">#{issuer_uri}</saml:Issuer><samlp:Status><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success" /></samlp:Status>#{assertion_and_signature}</samlp:Response>)
 

@@ -26,14 +26,4 @@ Gem::Specification.new do |s|
   s.executables = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ['lib']
   s.rdoc_options = ['--charset=UTF-8']
-  s.add_development_dependency('nokogiri')
-  s.add_development_dependency('rails', '>= 5.2')
-  s.add_development_dependency('rake')
-  s.add_development_dependency('rspec', '~> 3.0')
-  s.add_development_dependency('rubocop')
-  s.add_development_dependency('rubocop-performance')
-  s.add_development_dependency('rubocop-rake')
-  s.add_development_dependency('rubocop-rspec')
-  s.add_development_dependency('ruby-saml')
-  s.add_development_dependency('timecop', '~> 0.9.0')
 end

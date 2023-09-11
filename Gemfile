@@ -5,7 +5,9 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test do
-  gem 'rails', '~> 7.0.0'
+  gem 'nokogiri'
+  gem 'rails', '>= 6.1.0'
+  gem 'rake'
   gem 'rubocop'
   gem 'rubocop-performance'
   gem 'rubocop-rake'
@@ -15,7 +17,6 @@ end
 
 group :test do
   gem 'capybara'
-  gem 'rake'
   gem 'rspec', '~> 3.0'
   gem 'rspec-rails', '~> 5.0'
   gem 'selenium-webdriver'
